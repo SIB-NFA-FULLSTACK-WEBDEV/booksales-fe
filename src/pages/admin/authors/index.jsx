@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getAuthors } from "../../../_services/authors"; // Sesuaikan path
+import { deleteAuthor, getAuthors } from "../../../_services/authors"; // Sesuaikan path
 import { Link } from "react-router-dom";
 
 export default function AdminAuthors() {
@@ -16,6 +16,17 @@ export default function AdminAuthors() {
 
   const toggleDropdown = (id) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this author?"
+    );
+
+    if (confirmDelete) {
+      await deleteAuthor(id);
+      setAuthors(authors.filter((author) => author.id !== id));
+    }
   };
 
   return (
@@ -97,7 +108,10 @@ export default function AdminAuthors() {
               <tbody>
                 {authors.length > 0 ? (
                   authors.map((author) => (
-                    <tr key={author.id} className="border-b dark:border-gray-700">
+                    <tr
+                      key={author.id}
+                      className="border-b dark:border-gray-700"
+                    >
                       <th
                         scope="row"
                         className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -152,12 +166,7 @@ export default function AdminAuthors() {
                             </ul>
                             <div className="py-1">
                               <button
-                                onClick={() => {
-                                  if (window.confirm("Are you sure?")) {
-                                    // Panggil fungsi deleteAuthor atau hapus via API
-                                    console.log("Deleting author", author.id);
-                                  }
-                                }}
+                                onClick={() => handleDelete(author.id)}
                                 className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                               >
                                 Delete
